@@ -12,8 +12,8 @@ userRouter.get("/", async (req, res) => {
 userRouter.post("/register", async (req, res) => {
     try {
         let { name, password, email } = req.body;
-        let user = await UserModel.findOne({ email });
-        if (user) return res.status(400).json({ err: "user has been registered already" })
+        let user = await UserModel.find({ email });
+        if (user.length>0) return res.status(400).json({ err: "user has been registered already" })
 
         bcrypt.hash(password, 8, async (err, hash) => {
             // Store hash in your password DB.
@@ -34,9 +34,9 @@ userRouter.post("/register", async (req, res) => {
 userRouter.post("/login", async (req, res) => {
     try {
         let { email, password } = req.body;
-        let user = await UserModel.findOne({ email });
+        let user = await UserModel.find({ email });
         // console.log(password);
-        if (!user) return res.status(400).json({ err: "register yourself first before login" })
+        if (user.length>0) return res.status(400).json({ err: "register yourself first before login" })
         bcrypt.compare(password, user.password, function (err, result) {
             if (result) {
                let token= jwt.sign({
