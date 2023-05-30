@@ -37,7 +37,7 @@ userRouter.post("/login", async (req, res) => {
         let user = await UserModel.find({ email });
         // console.log(password);
         if (user.length==0) return res.status(400).json({ err: "register yourself first before login" })
-        bcrypt.compare(password, user.password, function (err, result) {
+        bcrypt.compare(password, user[0].password, function (err, result) {
             if (result) {
                let token= jwt.sign({
                     userId: user._id
